@@ -67,6 +67,13 @@ class VescUart
 		 * @return     True if successfull otherwise false
 		 */
 		bool getVescValues(void);
+    
+        /**
+         * @brief      Stores the returned data
+         *
+         * @return     True if successfull otherwise false
+         */
+        bool checkVescValues(void);
 
 		/**
 		 * @brief      Sends values for joystick and buttons to the nunchuck app

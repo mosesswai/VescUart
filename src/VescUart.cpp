@@ -59,7 +59,7 @@ int VescUart::receiveUartMessage(uint8_t * payloadReceived) {
 
 					default:
 						if( debugPort != NULL ){
-							debugPort->println("Unvalid start bit");
+							debugPort->println("Invalid start bit");
 						}
 					break;
 				}
@@ -225,16 +225,27 @@ bool VescUart::processReadPacket(uint8_t * message) {
 bool VescUart::getVescValues(void) {
 
 	uint8_t command[1] = { COMM_GET_VALUES };
-	uint8_t payload[256];
 
 	if(debugPort!=NULL){
 		debugPort->println("Command: COMM_GET_VALUES");
 	}
 
-	packSendPayload(command, 1);
-	// delay(1); //needed, otherwise data is not read
+	int lenPayloadSent = packSendPayload(command, 1);
+    
+    // If 7 bytes sent
+    if (lenPayloadSent == 6) {
+        delay(10);
+        if(checkVescValues()) return true;
+    } else {
+        return false;
+    }
+    return false;
+}
 
-	int lenPayload = receiveUartMessage(payload);
+bool VescUart::checkVescValues(void) {
+    uint8_t payload[256];
+	
+    int lenPayload = receiveUartMessage(payload);
 
 	if (lenPayload > 55) {
 		bool read = processReadPacket(payload); //returns true if sucessful
